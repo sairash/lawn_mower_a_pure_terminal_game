@@ -1,5 +1,6 @@
 ![lawn mower a pure terminal game](https://img.shields.io/github/license/sairash/lawn_mower_a_pure_terminal_game)<br/>
-Under Less Active developement
+# Under Less Active developement
+![lawn mower a pure terminal game](https://i.ibb.co/2hT3qBz/ezgif-7-ac891605204e.gif)
 
 # Lawn Mower The Game
 
@@ -14,7 +15,6 @@ Made wsing python
 
 There is a player ``` `.=. ``` with the ability to jump and have to dodge ` ';','▲',',','█', '▐', '▌', '◄' ` grass.
 
-![lawn mower a pure terminal game](https://i.ibb.co/2hT3qBz/ezgif-7-ac891605204e.gif)
 
 It's a in 2x speed!!
 
