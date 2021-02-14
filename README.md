@@ -11,4 +11,4 @@ Made wsing python
 
 There is a player ``` `.=. ``` with the ability to jump and have to dodge ` ';','▲',',','█', '▐', '▌', '◄' ` grass.
 
-[!Sairash](https://i.ibb.co/2hT3qBz/ezgif-7-ac891605204e.gif)
+![Sairash](https://i.ibb.co/2hT3qBz/ezgif-7-ac891605204e.gif)
