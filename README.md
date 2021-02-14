@@ -10,7 +10,5 @@ Made wsing python
 # Game Mechanics
 
 There is a player 
-```diff
-=
-```
+- ![#f03c15] =
 with the ability to jump
