@@ -14,7 +14,3 @@ Made wsing python
 # Game Mechanics
 
 There is a player ``` `.=. ``` with the ability to jump and have to dodge ` ';','▲',',','█', '▐', '▌', '◄' ` grass.
-
-
-It's a in 2x speed!!
-
