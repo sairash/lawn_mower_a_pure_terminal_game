@@ -11,6 +11,6 @@ Made wsing python
 
 There is a player 
 ```diff
-- =
+=
 ```
 with the ability to jump
