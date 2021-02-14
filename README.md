@@ -9,4 +9,4 @@ Made wsing python
 
 # Game Mechanics
 
-There is a player ` `.=.` with the ability to jump
+There is a player ` \`.=.` with the ability to jump
