@@ -9,7 +9,8 @@ Made wsing python
 
 # Game Mechanics
 
-There is a player ```diff
+There is a player 
+```diff
 `- = `
 ```
 with the ability to jump
