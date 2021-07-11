@@ -8,7 +8,7 @@ A game Completly Based on Terminal
 
 It is a game that is like Chrome's Dinosaur Game for terminal
 
-Made wsing python
+Made using python
 
 
 # Game Mechanics
