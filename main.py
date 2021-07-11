@@ -181,9 +181,14 @@ while True:
             if line == 12:
                 grass_manager(block)
             if game_over:
-                score = score - 2
+                score = score - 1
                 os.system('CLS')
+                if score > int(high_score):
+                    high_score = score
                 print_color(' '*int(width/3)+'Game Over','#ff0000')
+                print_color(' '*(int(width/3)+18)+'Score: '+str(score), '#ffffff', end='')
+                print_color(' HighScore: '+str(high_score),'#00ff00', end='')
+                high_score_save(str(score))
                 sys.exit()
             if line == 13:
                 print_color('#', '#00ff00',end='')
