@@ -13,4 +13,4 @@ Made using python
 
 # Game Mechanics
 
-There is a player ``` `.=. ``` with the ability to jump and have to dodge ` ';','▲',',','█', '▐', '▌', '◄' ` grass.
+There is a player ``` `.=. ``` with the ability to jump and have to dodge ` ';' ` grass.
