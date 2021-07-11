@@ -11,20 +11,28 @@ os.system('CLS')
 
 frames_per_second=3
 score = 0
-high_score=2000
 
-player_jump_mode=3
+
+time_for_jump = 4
+time_for_jump_temp = time_for_jump
 player_jumping = False
-player_jumping_up = False
-player_jumping_down = False
-player_location=12
-grass_array = []
-types_of_grass_prefab = [';','▲',',','█', '▐', '▌', '◄']
-grass_spawn_rate = 9
-number_of_space_manager = 0
-pos_grass_while_displaying=0
+player_up = False
+player_down = False
+player_location=12 
+player_dies_when_the_grass_reaches_here = 5
+
+grass_despawn_when_less_than=4
+grass_location = []
+grass_last_position = width
+
+game_over=False
+
+text_file = open("data.dat", "r")
+high_score = text_file.readlines()[0]
+text_file.close()
 
 
+os.system('mode con: cols='+str(width)+' lines='+str(height+5)+'') #change size of terminal
 
 valid_hex = '0123456789ABCDEF'.__contains__
 def cleanhex(data):
@@ -35,26 +43,8 @@ def print_color(text, hexcode, end='\n'):
     hexint = int(cleanhex(hexcode), 16)
     print("\x1B[38;2;{};{};{}m{}\x1B[0m".format(hexint>>16, hexint>>8&0xFF, hexint&0xFF, text),end=end)
 
-
-def player_jump():
-    global player_location, player_jump_mode, player_jumping_up, player_jumping_down, player_jumping
-    if player_jump_mode > 0 and player_jumping_up:
-        player_jump_mode = player_jump_mode - 1
-        player_location = player_location-1
-    else:
-        player_jumping_up = False
-        player_jumping_down = True
-
-    if player_jump_mode < 3 and player_jumping_down:
-        player_jump_mode = player_jump_mode + 1
-        player_location = player_location + 1
-    else:
-        player_jumping_up = False
-        player_jumping_down = False
-
-    if player_location == 12 and player_jumping_up == False and player_jumping_down == False:
-        player_jumping = False
-
+def terminal_prop():
+    os.system('CLS')
 
 
 def print_player():
@@ -64,77 +54,146 @@ def print_player():
 
 
 
-def print_grass(where_grass,postion_grass):
-    global player_location, grass_array, number_of_space_manager
-    if where_grass == 0:
-        number_of_space_manager = grass_array[postion_grass][0]
-    else:
-        number_of_space_manager =   grass_array[postion_grass][0] - grass_array[postion_grass-1][0]
-    if player_location == 12:
-        print_color(' '*int(number_of_space_manager)+types_of_grass_prefab[grass_array[postion_grass][1]], '#66ff00', end='')
-    else:
-        if number_of_space_manager >= 4:
-            print_color(' '*int(number_of_space_manager)+types_of_grass_prefab[grass_array[postion_grass][1]], '#66ff00', end='')
-        else:
-            grass_array[postion_grass][0] = 0
+def spawn_sky():
+    print()
+    print_color(' '*20+'*'+' '*19+'*'+' '*10+'*'+' '*50+'*'+'  '+'▄','#ffffff')
+    print_color(' '*(width-16)+'███','#ffffff')
+    print_color('*'+' '*20+'*'+' '*10+'*'+' '*49+'*'+' '*19+'   '+'▀','#ffffff')
 
+def high_score_save(score):
+    f = open("data.dat", "w")
+    f.write(score)
+    f.close()
+
+
+def should_spwan_grass(number_of_grass):
+    global grass_last_position
+    if(number_of_grass == 0):
+        return True
+    elif(grass_location[len(grass_location)-1] <= 100):
+        return True
+    else:
+        return False
 
 def spawn_grass():
-    global types_of_grass_prefab, grass_array, width
-    if random.randint(0,10) >= grass_spawn_rate:
-        grass_array.append([width-7, random.randint(0, len(types_of_grass_prefab)-1)])
+    global grass_last_position
+    grass_location.append(width)
 
-def grass_manager(position_grass):
-    global grass_array
-    if grass_array[position_grass][0] != 0:
-        grass_array[position_grass][0]=grass_array[position_grass][0]-1
+
+def grass_postion_manager():
+    for key in range(len(grass_location)):
+        grass_location[key] -= 1;
+
+
+def print_first_grass(grass_location_postion_not_global):
+    global grass_last_position
+    grass_last_position = grass_location_postion_not_global
+    if player_location != 12 & line == 12:
+        print_color(' '*(grass_last_position)+';','#66ff00',end='')
     else:
-        del grass_array[position_grass]
+        print_color(' '*(grass_last_position-4)+';','#66ff00',end='')
+
+def print_other_grass(grass_location_postion_not_global):
+    global grass_last_position
+    print_color(' '*((grass_location_postion_not_global - 1) -grass_last_position)+';','#66ff00',end='')
+    grass_last_position += (grass_location_postion_not_global - grass_last_position)
+
+
+def print_grass(block):
+    global game_over, grass_location
+    delete_first_item = False
+    for key in range(len(grass_location)):
+        grass_location_postion = grass_location[key]
+        if player_location == 12 and grass_location_postion+1 == player_dies_when_the_grass_reaches_here:
+            game_over = True
+        if key == 0:
+            if block == grass_location_postion:
+                print_first_grass(grass_location_postion)
+        else:
+            if block == grass_location[key]:
+                print_other_grass(grass_location_postion)
+        if grass_location_postion <= grass_despawn_when_less_than:
+            delete_first_item = True
+    if delete_first_item:
+        grass_location.pop(0)
+
+
+def grass_manager(block):
+    number_of_grass = len(grass_location)
+    if should_spwan_grass(number_of_grass):
+        spawn_grass()
+    print_grass(block)
+
+
+
+def player_jump():
+    global player_jumping, player_up, player_down, time_for_jump_temp, player_location
+    if player_up:
+        for x in range(time_for_jump_temp):
+            player_location -= 1
+            time_for_jump_temp -=1
+            break
+        if time_for_jump_temp == 0:
+            player_up = False
+            player_down = True
+    elif player_down:
+        for x in range(time_for_jump):
+            player_location += 1
+            time_for_jump_temp +=1
+            break
+        if time_for_jump_temp == time_for_jump:
+            player_up = False
+            player_down = False
+    else:
+        player_up = False
+        player_down = False
+        player_jumping = False
 
 
 def up():
-    global up_just_pressed, player_jump_mode, player_jumping, player_location, player_jumping_up, player_jumping_down
-
-    if up_just_pressed == False and player_jumping == False:
-        player_jump_mode = player_jump_mode - 1
+    global player_jumping, player_up, player_down
+    if player_jumping:
+        pass
+    else:
         player_jumping = True
-        player_jumping_up = True
-        player_jumping_down = False
-        player_location = player_location - 1
+        player_up = True
 
-        up_just_pressed = True
-
+def exitRequest():
+    global game_over
+    game_over = True
 
 while True:
-    spawn_grass()
+    terminal_prop()
     up_just_pressed = False
-    os.system('CLS')
-    print_color('Score: '+str(score)+'   HighScore:'+str(high_score), '#ffffff', end='')
+    print_color('Score: '+str(score), '#ffffff', end='')
+    print_color(' HighScore: '+str(high_score),'#00ff00', end='')
     score = score+1
     if player_jumping:
         player_jump()
     keyboard.add_hotkey('up', up)
+    keyboard.add_hotkey('esc', exitRequest)
     for line in range(height):
         if line == player_location:
             print_player()
-
+        if line == 12:
+            grass_postion_manager()
         for block in range(width):
-            pos_grass_while_displaying = 0
-            for position,grass in enumerate(grass_array):
-                if line == 12 and block == grass[0]:
-                    grass_manager(position)
-                    print_grass(pos_grass_while_displaying,position)
-
-                if grass[0] == 5 and player_location == 12:
-                    print()
-                    print_color('Game Over','#ff0000',end='')
-                    sys.exit()
-                pos_grass_while_displaying += 1
+            if line == 12:
+                grass_manager(block)
+            if game_over:
+                score = score - 2
+                os.system('CLS')
+                print_color(' '*int(width/3)+'Game Over','#ff0000')
+                sys.exit()
             if line == 13:
-                print_color('█', '#66ff00',end='')
+                print_color('#', '#00ff00',end='')
             if line == 14:
-                print_color('▀', '#b5651d',end='')
+                print_color('"', '#b5651d',end='')
         print()
-    #
-    # print_player()
+    print_color(' Use', '#ffffff', end='')
+    print_color(' [^] ', '#0000ff',end='')
+    print_color('Up Arrow Key to jump and Use ','#ffffff', end='')
+    print_color('[esc] ', '#ff0000',end='')
+    print_color('to Exit','#ffffff',end='')
+    print()
     time.sleep(1/frames_per_second)
