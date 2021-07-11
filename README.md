@@ -1,6 +1,6 @@
 ![lawn mower a pure terminal game](https://img.shields.io/github/license/sairash/lawn_mower_a_pure_terminal_game)<br/>
 # Under Less Active developement
-![lawn mower a pure terminal game](https://i.ibb.co/2hT3qBz/ezgif-7-ac891605204e.gif)
+![lawn mower a pure terminal game](screenshots/lawn_mower_demo.gif)
 
 # Lawn Mower The Game
 
